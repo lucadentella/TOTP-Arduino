@@ -1,0 +1,14 @@
+#######################################
+# Syntax Coloring Map For TOTP
+####################################### 
+# Datatypes (KEYWORD1)
+#######################################
+
+TOTP	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+getCode	KEYWORD2
+getCodeFromSteps KEYWORD2
