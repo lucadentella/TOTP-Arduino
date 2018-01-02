@@ -12,16 +12,16 @@
 #define __WRITE_RETURN(x) return x;
 #endif
 
-#define HASH_LENGTH 32
-#define BLOCK_LENGTH 64
+#define SHA256_HASH_LENGTH 32
+#define SHA256_BLOCK_LENGTH 64
 
-union _buffer {
-  uint8_t b[BLOCK_LENGTH];
-  uint32_t w[BLOCK_LENGTH/4];
+union _sha256_buffer {
+  uint8_t b[SHA256_BLOCK_LENGTH];
+  uint32_t w[SHA256_BLOCK_LENGTH/4];
 };
-union _state {
-  uint8_t b[HASH_LENGTH];
-  uint32_t w[HASH_LENGTH/4];
+union _sha256_state {
+  uint8_t b[SHA256_HASH_LENGTH];
+  uint32_t w[SHA256_HASH_LENGTH/4];
 };
 
 class Sha256Class : public Print
@@ -38,12 +38,12 @@ class Sha256Class : public Print
     void addUncounted(uint8_t data);
     void hashBlock();
     uint32_t ror32(uint32_t number, uint8_t bits);
-    _buffer buffer;
+    _sha256_buffer buffer;
     uint8_t bufferOffset;
-    _state state;
+    _sha256_state state;
     uint32_t byteCount;
-    uint8_t keyBuffer[BLOCK_LENGTH];
-    uint8_t innerHash[HASH_LENGTH];
+    uint8_t keyBuffer[SHA256_BLOCK_LENGTH];
+    uint8_t innerHash[SHA256_HASH_LENGTH];
 };
 extern Sha256Class Sha256;
 

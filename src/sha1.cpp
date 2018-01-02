@@ -17,7 +17,7 @@ const uint8_t sha1InitState[] PROGMEM = {
 };
 
 void Sha1Class::init(void) {
-  memcpy_P(state.b,sha1InitState,HASH_LENGTH);
+  memcpy_P(state.b,sha1InitState,SHA1_HASH_LENGTH);
   byteCount = 0;
   bufferOffset = 0;
 }
@@ -66,7 +66,7 @@ void Sha1Class::hashBlock() {
 void Sha1Class::addUncounted(uint8_t data) {
   buffer.b[bufferOffset ^ 3] = data;
   bufferOffset++;
-  if (bufferOffset == BLOCK_LENGTH) {
+  if (bufferOffset == SHA1_BLOCK_LENGTH) {
     hashBlock();
     bufferOffset = 0;
   }
@@ -122,19 +122,19 @@ uint8_t* Sha1Class::result(void) {
 
 void Sha1Class::initHmac(const uint8_t* key, int keyLength) {
   uint8_t i;
-  memset(keyBuffer,0,BLOCK_LENGTH);
-  if (keyLength > BLOCK_LENGTH) {
+  memset(keyBuffer,0,SHA1_BLOCK_LENGTH);
+  if (keyLength > SHA1_BLOCK_LENGTH) {
     // Hash long keys
     init();
     for (;keyLength--;) write(*key++);
-    memcpy(keyBuffer,result(),HASH_LENGTH);
+    memcpy(keyBuffer,result(),SHA1_HASH_LENGTH);
   } else {
     // Block length keys are used as is
     memcpy(keyBuffer,key,keyLength);
   }
   // Start inner hash
   init();
-  for (i=0; i<BLOCK_LENGTH; i++) {
+  for (i=0; i<SHA1_BLOCK_LENGTH; i++) {
     write(keyBuffer[i] ^ HMAC_IPAD);
   }
 }
@@ -142,11 +142,11 @@ void Sha1Class::initHmac(const uint8_t* key, int keyLength) {
 uint8_t* Sha1Class::resultHmac(void) {
   uint8_t i;
   // Complete inner hash
-  memcpy(innerHash,result(),HASH_LENGTH);
+  memcpy(innerHash,result(),SHA1_HASH_LENGTH);
   // Calculate outer hash
   init();
-  for (i=0; i<BLOCK_LENGTH; i++) write(keyBuffer[i] ^ HMAC_OPAD);
-  for (i=0; i<HASH_LENGTH; i++) write(innerHash[i]);
+  for (i=0; i<SHA1_BLOCK_LENGTH; i++) write(keyBuffer[i] ^ HMAC_OPAD);
+  for (i=0; i<SHA1_HASH_LENGTH; i++) write(innerHash[i]);
   return result();
 }
 Sha1Class Sha1;
