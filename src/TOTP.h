@@ -8,13 +8,19 @@
 #ifndef _TOTP_H
 #define _TOTP_H
 
-
 class TOTP {
 
 	public:
 	
-		TOTP(uint8_t* hmacKey, int keyLength);
-		TOTP(uint8_t* hmacKey, int keyLength, int timeStep);
+		enum Algorithm {
+			SHA1,
+			SHA256
+		};
+
+		TOTP(uint8_t* hmacKey, int keyLength, Algorithm algorithm);
+		TOTP(uint8_t* hmacKey, int keyLength) : TOTP(hmacKey, keyLength, Algorithm::SHA1) { };
+		TOTP(uint8_t* hmacKey, int keyLength, int timeStep, Algorithm algorithm);
+		TOTP(uint8_t* hmacKey, int keyLength, int timeStep) : TOTP(hmacKey, keyLength, Algorithm::SHA1) { };
 		char* getCode(long timeStamp);
 		char* getCodeFromSteps(long steps);
 	
@@ -28,6 +34,7 @@ class TOTP {
 		int _offset;
 		long _truncatedHash;
 		char _code[7];
+		Algorithm _algorithm;
 };
 
 #endif

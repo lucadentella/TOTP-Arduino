@@ -6,21 +6,22 @@
 
 #include "TOTP.h"
 #include "sha1.h"
+#include "sha256.h"
 
 // Init the library with the private key, its length and the timeStep duration
-TOTP::TOTP(uint8_t* hmacKey, int keyLength, int timeStep) {
-
+TOTP::TOTP(uint8_t* hmacKey, int keyLength, int timeStep, Algorithm algorithm) {
 	_hmacKey = hmacKey;
 	_keyLength = keyLength;
 	_timeStep = timeStep;
+	_algorithm = algorithm;
 };
 
 // Init the library with the private key, its length and a time step of 30sec (default for Google Authenticator)
-TOTP::TOTP(uint8_t* hmacKey, int keyLength) {
-
+TOTP::TOTP(uint8_t* hmacKey, int keyLength, Algorithm algorithm) {
 	_hmacKey = hmacKey;
 	_keyLength = keyLength;
 	_timeStep = 30;
+	_algorithm = algorithm;
 };
 
 // Generate a code, using the timestamp provided
@@ -43,10 +44,19 @@ char* TOTP::getCodeFromSteps(long steps) {
 	_byteArray[6] = (int)((steps >> 8) & 0XFF);
 	_byteArray[7] = (int)((steps & 0XFF));
 	
-	// STEP 1, get the HMAC-SHA1 hash from counter and key
-	Sha1.initHmac(_hmacKey, _keyLength);
-	Sha1.write(_byteArray, 8);
-	_hash = Sha1.resultHmac();
+	// STEP 1, get the hash from counter and key
+	switch (_algorithm) {
+		case SHA1:
+			Sha1.initHmac(_hmacKey, _keyLength);
+			Sha1.write(_byteArray, 8);
+			_hash = Sha1.resultHmac();
+			break;
+		case SHA256:
+			Sha256.initHmac(_hmacKey, _keyLength);
+			Sha256.write(_byteArray, 8);
+			_hash = Sha256.resultHmac();
+		break;
+	}
 	
 	// STEP 2, apply dynamic truncation to obtain a 4-bytes string
 	_offset = _hash[20 - 1] & 0xF; 
