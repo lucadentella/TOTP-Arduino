@@ -43,6 +43,8 @@ char* TOTP::getCodeFromSteps(long steps) {
 	_byteArray[5] = (int)((steps >> 16) & 0xFF);
 	_byteArray[6] = (int)((steps >> 8) & 0XFF);
 	_byteArray[7] = (int)((steps & 0XFF));
+
+	int digestLength;
 	
 	// STEP 1, get the hash from counter and key
 	switch (_algorithm) {
@@ -50,16 +52,18 @@ char* TOTP::getCodeFromSteps(long steps) {
 			Sha1.initHmac(_hmacKey, _keyLength);
 			Sha1.write(_byteArray, 8);
 			_hash = Sha1.resultHmac();
+			digestLength = 20;
 			break;
 		case SHA256:
 			Sha256.initHmac(_hmacKey, _keyLength);
 			Sha256.write(_byteArray, 8);
 			_hash = Sha256.resultHmac();
+			digestLength = 32;
 		break;
 	}
 	
 	// STEP 2, apply dynamic truncation to obtain a 4-bytes string
-	_offset = _hash[20 - 1] & 0xF; 
+	_offset = _hash[digestLength - 1] & 0xF; 
 	_truncatedHash = 0;
 	for (int j = 0; j < 4; ++j) {
 		_truncatedHash <<= 8;
