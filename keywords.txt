@@ -11,4 +11,4 @@ TOTP	KEYWORD1
 #######################################
 
 getCode	KEYWORD2
-getCodeFromSteps KEYWORD2
+getCodeFromSteps	KEYWORD2
