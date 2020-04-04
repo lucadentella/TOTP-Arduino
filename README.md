@@ -12,18 +12,18 @@ Install the library using the Library Manager or manually in the \libraries fold
 This library requires the [Cryptosuite library](https://github.com/maniacbug/Cryptosuite) by maniacbug.
 
 First, store your private key into an array:
-```
+```c++
 uint8_t hmacKey[] = {0x4d, 0x79, 0x4c, 0x65, 0x67, 0x6f, 0x44, 0x6f, 0x6f, 0x72};
 ```
 Then create a new instance of the TOTP class using one of the two available constructors:
-```
+```c++
 TOTP(uint8_t* hmacKey, int keyLength);
 TOTP(uint8_t* hmacKey, int keyLength, int timeStep);
 ```
 The first assumes a timeStep of 30 seconds, value used for example by the Google Authenticator app.
 
 Two methods are available to get a TOTP passcode:
-```
+```c++
 char* getCode(long timeStamp);
 char* getCodeFromSteps(long steps);
 ```
