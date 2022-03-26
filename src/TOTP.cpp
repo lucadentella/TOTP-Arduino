@@ -7,6 +7,8 @@
 #include "TOTP.h"
 #include "sha1.h"
 
+const int DEFAULT_CODE_LEN = 6;
+
 // Init the library with the private key, its length and the timeStep duration
 TOTP::TOTP(uint8_t* hmacKey, int keyLength, int timeStep) {
 
@@ -23,16 +25,42 @@ TOTP::TOTP(uint8_t* hmacKey, int keyLength) {
 	_timeStep = 30;
 };
 
+long pow10(int n) {
+    static long pow10[10] = {
+        1, 10, 100, 1000, 10000, 
+        100000, 1000000, 10000000, 100000000, 1000000000,
+    };
+
+    return pow10[n]; 
+} 
+
+char* getFormatString(int codeLen) {
+	static char format[10][6] = {
+        "%01ld", "%02ld", "%03ld", "%04ld", "%05ld", 
+         "%06ld", "%07ld",  "%08ld",  "%09ld",
+    };
+
+	return format[codeLen-1];
+}
+
 // Generate a code, using the timestamp provided
 char* TOTP::getCode(long timeStamp) {
-	
+	return getCode(timeStamp, DEFAULT_CODE_LEN);
+}
+
+// Generate a code of specified length, using the timestamp provided  
+char* TOTP::getCode(long timeStamp, int codeLen) {
 	long steps = timeStamp / _timeStep;
-	return getCodeFromSteps(steps);
+	return getCodeFromSteps(steps, codeLen);
 }
 
 // Generate a code, using the number of steps provided
 char* TOTP::getCodeFromSteps(long steps) {
-	
+	return getCodeFromSteps(steps, DEFAULT_CODE_LEN);
+
+}
+
+char *TOTP::getCodeFromSteps(long steps, int codeLen) {
 	// STEP 0, map the number of steps in a 8-bytes array (counter value)
 	_byteArray[0] = 0x00;
 	_byteArray[1] = 0x00;
@@ -58,9 +86,10 @@ char* TOTP::getCodeFromSteps(long steps) {
 
 	// STEP 3, compute the OTP value
 	_truncatedHash &= 0x7FFFFFFF;
-	_truncatedHash %= 1000000;
+	_truncatedHash %= pow10(codeLen);
 	
-	// convert the value in string, with heading zeroes
-	sprintf(_code, "%06ld", _truncatedHash);
+	sprintf(_code, getFormatString(codeLen), _truncatedHash);
+
 	return _code;
 }
+
