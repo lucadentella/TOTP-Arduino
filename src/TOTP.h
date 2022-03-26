@@ -16,8 +16,10 @@ class TOTP {
 		TOTP(uint8_t* hmacKey, int keyLength);
 		TOTP(uint8_t* hmacKey, int keyLength, int timeStep);
 		char* getCode(long timeStamp);
+		char* getCode(long timeStamp, int codeLen);  
 		char* getCodeFromSteps(long steps);
-	
+		char* getCodeFromSteps(long steps, int codeLen);
+
 	private:
 
 		uint8_t* _hmacKey;
@@ -27,7 +29,7 @@ class TOTP {
 		uint8_t* _hash;
 		int _offset;
 		long _truncatedHash;
-		char _code[7];
+		char _code[10];
 };
 
 #endif
