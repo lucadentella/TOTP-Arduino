@@ -60,7 +60,7 @@ char* TOTP::getCodeFromSteps(long steps) {
 	_truncatedHash &= 0x7FFFFFFF;
 	_truncatedHash %= 1000000;
 	
-	// convert the value in string, with heading zeroes
+	// convert the value in string, with leading zeroes
 	sprintf(_code, "%06ld", _truncatedHash);
 	return _code;
 }
