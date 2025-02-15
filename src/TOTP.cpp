@@ -25,7 +25,6 @@ TOTP::TOTP(uint8_t* hmacKey, int keyLength) {
 
 // Generate a code, using the timestamp provided
 char* TOTP::getCode(long timeStamp) {
-	
 	long steps = timeStamp / _timeStep;
 	return getCodeFromSteps(steps);
 }
@@ -65,7 +64,7 @@ unsigned long TOTP::getIntCodeFromSteps(long steps) {
 	_truncatedHash &= 0x7FFFFFFF;
 	_truncatedHash %= 1000000;
 	
-	return (unsigned long)_truncatedHash;
+	return _truncatedHash;
 }
 
 // Generate a code, using the number of steps provided
