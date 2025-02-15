@@ -70,12 +70,6 @@ unsigned long TOTP::getIntCodeFromSteps(long steps) {
 // Generate a code, using the number of steps provided
 char* TOTP::getCodeFromSteps(long steps) {
 	getCodeFromSteps(steps);
-	return (unsigned long)_truncatedHash;
-}
-
-// Generate a code, using the number of steps provided
-char* TOTP::getCodeFromSteps(long steps) {
-	getCodeFromSteps(steps);
 	// convert the value in string, with leading zeroes
 	sprintf(_code, "%06ld", _truncatedHash);
 	return _code;
