@@ -30,8 +30,13 @@ char* TOTP::getCode(long timeStamp) {
 	return getCodeFromSteps(steps);
 }
 
-// Generate a code, using the number of steps provided
-char* TOTP::getCodeFromSteps(long steps) {
+unsigned long TOTP::getIntCode(long timeStamp) {
+	long steps = timeStamp / _timeStep;
+	return getIntCodeFromSteps(steps);
+}
+
+// Generate a code (integer), using the number of steps provided
+unsigned long TOTP::getIntCodeFromSteps(long steps) {
 	
 	// STEP 0, map the number of steps in a 8-bytes array (counter value)
 	_byteArray[0] = 0x00;
@@ -60,6 +65,12 @@ char* TOTP::getCodeFromSteps(long steps) {
 	_truncatedHash &= 0x7FFFFFFF;
 	_truncatedHash %= 1000000;
 	
+	return (unsigned long)_truncatedHash;
+}
+
+// Generate a code, using the number of steps provided
+char* TOTP::getCodeFromSteps(long steps) {
+	getCodeFromSteps(steps);
 	// convert the value in string, with leading zeroes
 	sprintf(_code, "%06ld", _truncatedHash);
 	return _code;
